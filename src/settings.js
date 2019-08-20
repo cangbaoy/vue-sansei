@@ -1,6 +1,6 @@
 module.exports = {
 
-  title: 'Sansei',
+  title: 'MyShopPlus',
 
   /**
    * @type {boolean} true | false

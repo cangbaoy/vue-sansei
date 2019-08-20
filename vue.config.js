@@ -6,11 +6,14 @@ function resolve(dir) {
   return path.join(__dirname, dir)
 }
 
-const name = defaultSettings.title || 'Sansei' // page title
+const name = defaultSettings.title || 'vue Admin Template' // page title
+
 // If your port is set to 80,
 // use administrator privileges to execute the command line.
 // For example, Mac: sudo npm run
-const port = 9528 // dev port
+// You can change the port by the following methods:
+// port = 9528 npm run dev OR npm run dev --port = 9528
+const port = process.env.port || process.env.npm_config_port || 9528 // dev port
 
 // All configuration item explanations can be find in https://cli.vuejs.org/config/
 module.exports = {
@@ -21,14 +24,12 @@ module.exports = {
    * In most cases please use '/' !!!
    * Detail: https://cli.vuejs.org/config/#publicpath
    */
-  publicPath: '/', // 根域上下文目录
-  outputDir: 'dist', // 构建输出目录
-  assetsDir: 'static', // 静态资源目录 (js, css, img, fonts)
-  runtimeCompiler: true, // 运行时版本是否需要编译
-  transpileDependencies: [], // 默认babel-loader忽略mode_modules，这里可增加例外的依赖包名
-  productionSourceMap: false, // 是否在构建生产包时生成 sourceMap 文件，false将提高构建速度
-  lintOnSave: process.env.NODE_ENV === 'development', // 是否开启eslint保存检测，有效值：ture | false | 'error'
-  devServer: { // 配置跨域
+  publicPath: '/',
+  outputDir: 'dist',
+  assetsDir: 'static',
+  lintOnSave: process.env.NODE_ENV === 'development',
+  productionSourceMap: false,
+  devServer: {
     port: port,
     open: true,
     overlay: {
@@ -38,26 +39,17 @@ module.exports = {
     proxy: {
       // change xxx-api/login => mock/login
       // detail: https://cli.vuejs.org/config/#devserver-proxy
-      // [process.env.VUE_APP_BASE_API]: {
-      //   target: `http://127.0.0.1:${port}/mock`,
-      //   changeOrigin: true,
-      //   pathRewrite: {
-      //     ['^' + process.env.VUE_APP_BASE_API]: ''
-      //   }
-      // }
-      '/auth': {
-        target: 'http://192.168.5.105/auth',
+      [process.env.VUE_APP_BASE_API]: {
+        target: `http://127.0.0.1:${port}/mock`,
         changeOrigin: true,
-        ws: true,
         pathRewrite: {
-          '^/auth': ''
+          ['^' + process.env.VUE_APP_BASE_API]: ''
         }
       }
-    }
-    // after: require('./mock/mock-server.js')
+    },
+    after: require('./mock/mock-server.js')
   },
   configureWebpack: {
-    // webpack配置，值位对象时会合并配置，为方法时会改写配置
     // provide the app's title in webpack's name field, so that
     // it can be accessed in index.html to inject the correct title.
     name: name,
@@ -143,10 +135,5 @@ module.exports = {
           config.optimization.runtimeChunk('single')
         }
       )
-  },
-  parallel: require('os').cpus().length > 1, // 构建时开启多进程处理babel编译
-  pluginOptions: { // 第三方插件配置
-  },
-  pwa: { // 单页插件相关配置 https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-pwa
   }
 }

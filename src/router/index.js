@@ -164,8 +164,7 @@ export const constantRoutes = [
 ]
 
 const createRouter = () => new Router({
-  mode: 'history', // require service support
-  base: process.env.BASE_URL,
+  // mode: 'history', // require service support
   scrollBehavior: () => ({ y: 0 }),
   routes: constantRoutes
 })
@@ -177,16 +176,5 @@ export function resetRouter() {
   const newRouter = createRouter()
   router.matcher = newRouter.matcher // reset router
 }
-
-// 添加路由守卫
-// router.beforeEach((to, from, next) => {
-//   if (getToken()) {
-//     if (to.path === '/login') {
-//       next()
-//     } else {
-//       next('/login')
-//     }
-//   }
-// })
 
 export default router
